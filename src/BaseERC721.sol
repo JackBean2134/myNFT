@@ -130,9 +130,9 @@ contract BaseERC721 {
         require(to != owner, "ERC721: approval to current owner");
         require(
             msg.sender == owner || isApprovedForAll(owner, msg.sender),
-            "ERC721: approve caller is not owner nor approved for all"
+            "ERC721: approve caller is not token owner or approved for all"
         );
-       _approve(to, tokenId);
+        _approve(to, tokenId);
     }
     /**
      * @dev See {IERC721-getApproved}.
@@ -148,11 +148,9 @@ contract BaseERC721 {
      * @dev See {IERC721-setApprovalForAll}.
      */
     function setApprovalForAll(address operator, bool approved) public {
-        address sender = msg.sender;
-        require(operator != sender, "ERC721: approve to caller");
-        
-        _operatorApprovals[sender][operator] = approved;
-        emit ApprovalForAll(sender, operator, approved);
+        require(operator != msg.sender, "ERC721: approve to caller");
+        _operatorApprovals[msg.sender][operator] = approved;
+        emit ApprovalForAll(msg.sender, operator, approved);
     }
     /**
      * @dev See {IERC721-isApprovedForAll}.
@@ -169,7 +167,7 @@ contract BaseERC721 {
     function transferFrom(address from, address to, uint256 tokenId) public {
         require(
             _isApprovedOrOwner(msg.sender, tokenId),
-            "ERC721: transfer caller is not owner nor approved"
+            "ERC721: caller is not token owner or approved"
         );
         _transfer(from, to, tokenId);
     }
@@ -190,19 +188,19 @@ contract BaseERC721 {
         address from,
         address to,
         uint256 tokenId,
-        bytes memory _data
+        bytes memory data
     ) public {
         require(
             _isApprovedOrOwner(msg.sender, tokenId),
-            "ERC721: transfer caller is not owner nor approved"
+            "ERC721: caller is not token owner or approved"
         );
-        _safeTransfer(from, to, tokenId, _data);
+        _safeTransfer(from, to, tokenId, data);
     }
     /**
      * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients
      * are aware of the ERC721 protocol to prevent tokens from being forever locked.
      *
-     * `_data` is additional data, it has no specified format and it is sent in call to `to`.
+     * `data` is additional data, it has no specified format and it is sent in call to `to`.
      *
      * This internal function is equivalent to {safeTransferFrom}, and can be used to e.g.
      * implement alternative mechanisms to perform token transfer, such as signature-based.
@@ -212,7 +210,8 @@ contract BaseERC721 {
      * - `from` cannot be the zero address.
      * - `to` cannot be the zero address.
      * - `tokenId` token must exist and be owned by `from`.
-     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
+     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon
+     *   a safe transfer.
      *
      * Emits a {Transfer} event.
      */
@@ -220,11 +219,11 @@ contract BaseERC721 {
         address from,
         address to,
         uint256 tokenId,
-        bytes memory _data
+        bytes memory data
     ) internal {
         _transfer(from, to, tokenId);
         require(
-            _checkOnERC721Received(from, to, tokenId, _data),
+            _checkOnERC721Received(from, to, tokenId, data),
             "ERC721: transfer to non ERC721Receiver implementer"
         );
     }

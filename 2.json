@@ -1,0 +1,12 @@
+{
+  "name": "MyArtNFT #2",
+  "description": "MyArtNFT #2 from the MyArtNFT collection.",
+  "image": "ipfs://bafybeihpdm37q5fxz2irrvpyvpudcx7j3ocd2kiww5lcy34tcwb47ckqlq",
+  "attributes": [
+    {
+      "trait_type": "ID",
+      "value": 2
+    }
+  ]
+}
+
